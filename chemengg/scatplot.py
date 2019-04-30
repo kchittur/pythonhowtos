@@ -1,0 +1,55 @@
+from numpy import *
+import pylab as p
+from matplotlib import rc
+##rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+## for Palatino and other serif fonts use:
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+
+from scipy import stats, polyval, polyfit
+
+R1 = 2
+R2 = 20
+KD1 = 0.05
+KD2 = 20.0
+slope1 = -8.5
+intcp1 = 11
+slope2 = -0.190
+intcp2 = 1.7
+
+def scatfA(x,a,b):
+    return (a*x/(b + x))/x
+def scatfB(x,a,b):
+    return (a*x/(b + x))
+def stline(x,slope,intcp):
+    return x*slope + intcp
+
+x = linspace(0.0001,20.0,200)
+
+y = scatfB(x,R1,KD1) + scatfB(x,R2,KD2)
+z = scatfA(x,R1,KD1) + scatfA(x,R2,KD2)
+s1, i1, r1, p1, std_err = stats.linregress(y[:3],z[:3])
+s2, i2, r2, p2, std_err = stats.linregress(y[-3:],z[-3:])
+
+KD1C = -1.0/s1
+R1C = i1*KD1
+KD2C = -1.0/s2
+R2C = i2*KD2
+
+#print y[:3], z[:3], 'slope1 = ', s1, ' intercept 1 = ', i1
+#print y[-3:], z[-3:], 'slope1 = ', s2, ' intercept 1 = ', i2
+#print ' kd1 = ', KD1C, 'r1 = ', R1C, ' kd2 = ', KD2C , ' r2 = ', R2C
+
+p.grid()
+p.ylabel(r"\textbf{$\frac{LR}{L}$}",fontsize=16)
+p.xlabel(r"\textbf{$[LR]$}")
+p.xlim([0.0,8.0])
+p.ylim([0.0,24.0])
+p.plot(y,z,lw=1)
+#p.plot(x,stline(x,s1,i1),lw=2,ls=':',color='r')
+#p.plot(x,stline(x,s2,i2),lw=2,ls=':',color='r')
+#p.title(r"Scatchard Plot for Two Receptors K$_{D1}$=%s~R$_{D1}$=%s~K$_{D2}$=%s~R$_{D2}$=%s" %(KD1,R1,KD2,R2),fontsize=12,color='b')  
+p.savefig('concave-plot.png')
+p.show()
+p.clf()
+
