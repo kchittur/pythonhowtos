@@ -5,6 +5,7 @@
 % noweb enzyme-kinetics.w will extract the files you need
 % and this make file can help
 % name this enz.make
+% you also need python2, pythontex 
 
 \documentclass{tufte-handout}
 \usepackage{noweb}
@@ -120,7 +121,7 @@ results from the execution of the python code.
 You will need \href{https://www.cs.tufts.edu/~nr/noweb/}{noweb} if you begin with this
 file - the command {\em noweb analyze-enzyme-kinetics.w} will extract the
 \TeX file, the python codes and the make file.  You can then run
-{\em make -f analyze.make} to {\bf make} the documentation and run the code.
+{\em make -f enz.make} to {\bf make} the documentation and run the code.
 Sample data files are also included here.
 
 <<enz.make>>=
@@ -145,7 +146,14 @@ enzyme-kinetics.pdf: enzyme-kinetics.tex directfit.png directfitS0fixed.png lvbp
 	pdflatex -shell-escape enzyme-kinetics.tex
 
 clean:
-	rm -r -f *.aux *.toc enzyme-kinetics.pdf enzyme-kinetics.tex _minted*
+	rm -r -f *.aux *.toc *.log *.out enzyme-kinetics.tex _minted*
+	rm -f *.png *.pyc *.py *.dat resultsfile enz.make
+	rm -r -f pythontex-files-enzyme-kinetics
+	rm -f enzyme-kinetics.pytxcode
+
+distclean:
+	
+	rm -f *.png *.pyc *.py *.dat resultsfile enz.make
 	rm -r -f pythontex-files-enzyme-kinetics
 	rm -f enzyme-kinetics.pytxcode
 
@@ -1029,8 +1037,6 @@ infile = 'zs6e4.dat'
 
 popt, pcov = curve_fit(sintegrated, Zd, Td, p0 = (0.001, 0.001, 0.00075))
 
-#print popt
-
 myKm1 = popt[0]
 myVm1 = popt[1]
 myS01 = popt[2]
@@ -1698,9 +1704,6 @@ nKmi = (nkm1 + nk2)/nk1
 plt.plot(mytimef,myproductf,'ro',markevery=40)
 plt.savefig('fitapproximatemodel.png')
 plt.clf()
-#plt.show()
-
-
 
 @
 
@@ -1741,46 +1744,6 @@ $V_m$ (guess) & $V_m$ (final) & $K_m$ (guess) & $K_m$ (final) & & \\
 
 
 
-<<studyenzymekinetics.make>>=
-all: study-enzyme-kinetics.pdf 
-
-study-enzyme-kinetics.tex: study-enzyme-kinetics.w
-	noweb study-enzyme-kinetics.w
-
-completemodel.png: completemodel.py
-	python2 completemodel.py
-
-approximatemodel.png: approximatemodel.py
-	python2 approximatemodel.py
-
-fitapproximatemodel.png: fitapproximatemodel.py
-	python2 fitapproximatemodel.py
-
-directfit.png: directfitPvsTime.py
-	python2 directfitPvsTime.py
-
-directfitS0fixed.png: directfitPvsTimeSfixed.py
-	python2 directfitPvsTimeSfixed.py
-
-bothmodels.png: bothmodels.py
-	python2 bothmodels.py
-
-lvbplot.png: initialrates.py
-	python2 initialrates.py
-
-study-enzyme-kinetics.pdf: study-enzyme-kinetics.tex completemodel.png approximatemodel.png fitapproximatemodel.png directfit.png directfitS0fixed.png bothmodels.png lvbplot.png
-
-	pdflatex -shell-escape study-enzyme-kinetics.tex
-	pythontex --interpreter python:python2 study-enzyme-kinetics.tex
-	pdflatex -shell-escape study-enzyme-kinetics.tex
-	pdflatex -shell-escape study-enzyme-kinetics.tex
-
-clean:
-	rm -r -f *.aux *.toc study-enzyme-kinetics.pdf study-enzyme-kinetics.tex _minted*
-	rm -r -f pythontex-files-study-enzyme-kinetics
-	rm -f study-enzyme-kinetics.pytxcode
-
-@
 
 
 \end{document}
