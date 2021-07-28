@@ -5,7 +5,7 @@
 % noweb enzyme-kinetics.w will extract the files you need
 % and this make file can help
 % name this enz.make
-% you also need python2, pythontex 
+% you also need python, pythontex 
 
 \documentclass{tufte-handout}
 \usepackage{noweb}
@@ -57,7 +57,7 @@
 \usepackage{multirow}
 \usepackage{noweb}
 \usepackage{eqnarray}
-
+\usepackage{verbatim}
 \usepackage{tikz}
 
 \newcommand{\myred}[1]{\textcolor{red}{#1}}
@@ -131,17 +131,17 @@ enzyme-kinetics.tex: enzyme-kinetics.w
 	noweb enzyme-kinetics.w
 
 directfit.png: directfitPvsTime.py
-	python2 directfitPvsTime.py
+	python directfitPvsTime.py
 
 directfitS0fixed.png: directfitPvsTimeSfixed.py
-	python2 directfitPvsTimeSfixed.py
+	python directfitPvsTimeSfixed.py
 
 lvbplot.png: initialrates.py
-	python2 initialrates.py
+	python initialrates.py
 
 enzyme-kinetics.pdf: enzyme-kinetics.tex directfit.png directfitS0fixed.png lvbplot.png
 	pdflatex -shell-escape enzyme-kinetics.tex
-	pythontex --interpreter python:python2 enzyme-kinetics.tex
+	pythontex --interpreter python:python enzyme-kinetics.tex
 	pdflatex -shell-escape enzyme-kinetics.tex
 	pdflatex -shell-escape enzyme-kinetics.tex
 
@@ -1352,7 +1352,7 @@ def fitcompleteset(Td, Zd, parameters):
 # model index to compare to data
 #----------------------------------------------------
     findindex=lambda x:np.where(mt>=x)[0][0]
-    mindex=map(findindex,Td)
+    mindex=list(map(findindex,Td))
 #=======================================================
  
 #Score Fit of System
@@ -1430,7 +1430,7 @@ def fitapproximateset(Td, Zd, parameters):
 # model index to compare to data
 #----------------------------------------------------
     findindex=lambda x:np.where(mt>=x)[0][0]
-    mindex=map(findindex,Td)
+    mindex=list(map(findindex,Td))
 #=======================================================
  
 #Score Fit of System
@@ -1647,7 +1647,7 @@ plt.clf()
 
 @
 
-
+%\begin{comment}
 
 \begin{pycode}
 from fitcompletemodel import *
@@ -1674,6 +1674,7 @@ $V_m$ (guess) & $V_m$ (final) & $K_m$ (guess) & $K_m$ (final) & & \\
 \caption{Fitting the complete Model}
 \end{table}
 
+%\end{comment}
 
 <<fitapproximatemodel.py>>=
 <<requiredlibraries>>
@@ -1709,6 +1710,7 @@ plt.clf()
 
 
 
+%\begin{comment}
 
 \begin{pycode}
 from fitapproximatemodel import *
@@ -1735,6 +1737,7 @@ $V_m$ (guess) & $V_m$ (final) & $K_m$ (guess) & $K_m$ (final) & & \\
 \caption{Fitting the approximate model}
 \end{table}
 
+%\end{comment}
 
 %\lstinputlisting{completemodel.py}
 %\section{python listing for fitcompletemodel}
